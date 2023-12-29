@@ -1,0 +1,41 @@
+{# {{dump(node.field_components.value)}} #}
+
+{% for key, value in content.field_components['#items'] %}
+
+	{# {{dump(content.field_components[key]['#paragraph'].field_cards)}} #}
+
+	{% for card in content.field_components[key]['#paragraph'].field_cards %}
+
+		{# {{dump(card.entity)}} #}
+		{#  #}
+		{# {{dump(card.entity.field_image.entity.field_media_image.height)}}
+				{{dump(card.entity.field_image.entity.field_media_image.width)}}
+				{{dump(card.entity.field_image.entity.field_media_image.entity.uri.value)}} #}
+
+		<img height="{{card.entity.field_image.entity.field_media_image.height}}" width="{{card.entity.field_image.entity.field_media_image.width}}" alt="{{card.entity.field_image.entity.field_media_image.alt}}" href="{{card.entity.field_image.entity.field_media_image.entity.uri.value}}" src="{{file_url(card.entity.field_image.entity.field_media_image.entity.uri.value)}}"> <h2>
+
+			{{card.entity.field_title.value}}
+		</h2>
+		<p>
+			{{card.entity.field_description.value}}
+		</p>
+		<a href="{{card.entity.field_link.value.uri}}">
+			{{card.entity.field_link.value.title}}</a>
+
+	{% endfor %}
+{% endfor %}{# {% for tag in content.field_components %}
+
+							{{dump(tag.value)}}
+
+						{% endfor %} #}{# {% for key, value in node.field_components.0 %}
+							{{dump(value)}}
+						{% endfor %}
+						{% for key, value in node.field_components.1 %}
+							{{dump(value)}}
+						{% endfor %} #}
+{#
+		<ul>
+			{% for i in content.field_components['#items']|keys %}
+				<li>{{dump(content.field_components[i])}}</li>
+			{% endfor %}
+		</ul> #}
