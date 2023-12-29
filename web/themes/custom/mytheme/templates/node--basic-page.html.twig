@@ -9,8 +9,8 @@
 		{# {{dump(card.entity)}} #}
 		{#  #}
 		{# {{dump(card.entity.field_image.entity.field_media_image.height)}}
-				{{dump(card.entity.field_image.entity.field_media_image.width)}}
-				{{dump(card.entity.field_image.entity.field_media_image.entity.uri.value)}} #}
+								{{dump(card.entity.field_image.entity.field_media_image.width)}}
+								{{dump(card.entity.field_image.entity.field_media_image.entity.uri.value)}} #}
 
 		<img height="{{card.entity.field_image.entity.field_media_image.height}}" width="{{card.entity.field_image.entity.field_media_image.width}}" alt="{{card.entity.field_image.entity.field_media_image.alt}}" href="{{card.entity.field_image.entity.field_media_image.entity.uri.value}}" src="{{file_url(card.entity.field_image.entity.field_media_image.entity.uri.value)}}"> <h2>
 
@@ -24,15 +24,15 @@
 
 	{% endfor %}
 {% endfor %}{# {% for tag in content.field_components %}
-
-							{{dump(tag.value)}}
-
-						{% endfor %} #}{# {% for key, value in node.field_components.0 %}
-							{{dump(value)}}
-						{% endfor %}
-						{% for key, value in node.field_components.1 %}
-							{{dump(value)}}
-						{% endfor %} #}
+	
+									{{dump(tag.value)}}
+	
+								{% endfor %} #}{# {% for key, value in node.field_components.0 %}
+									{{dump(value)}}
+								{% endfor %}
+								{% for key, value in node.field_components.1 %}
+									{{dump(value)}}
+								{% endfor %} #}
 {#
 		<ul>
 			{% for i in content.field_components['#items']|keys %}
