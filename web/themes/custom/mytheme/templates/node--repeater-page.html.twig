@@ -1,86 +1,230 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<div class="usa-section">
+	<div class="grid-container">
+		<div class="grid-row grid-gap">
+			<div class="usa-layout-docs__sidenav display-none desktop:display-block desktop:grid-col-3">
+				<nav aria-label="Secondary navigation">
+					<ul class="usa-sidenav">
+						<li class="usa-sidenav__item">
+							<a href="javascript:void(0);">Parent link</a>
+						</li>
+						<li class="usa-sidenav__item">
+							<a href="javascript:void(0);" class="usa-current">Current page</a>
+							<ul class="usa-sidenav__sublist">
+								<li class="usa-sidenav__item">
+									<a href="javascript:void(0);">Child link</a>
+								</li>
+								<li class="usa-sidenav__item">
+									<a href="javascript:void(0);" class="usa-current">Child link</a>
+									<ul class="usa-sidenav__sublist">
+										<li class="usa-sidenav__item">
+											<a href="javascript:void(0);">Grandchild link</a>
+										</li>
+										<li class="usa-sidenav__item">
+											<a href="javascript:void(0);" class="usa-current">Grandchild link</a>
+										</li>
+										<li class="usa-sidenav__item">
+											<a href="javascript:void(0);">Grandchild link</a>
+										</li>
+									</ul>
 
-<div class="container">
-	<div class="row">
-		<div
-			class="col-8 offset-2">
+								</li>
+								<li class="usa-sidenav__item">
+									<a href="javascript:void(0);">Child link</a>
+								</li>
+							</ul>
 
-			{# Check if the repeater field exists and is not empty #}
-			{% if content.field_content is not empty %}
-				{# Loop through each item in the repeater field #}
-				{% for item in content.field_content['#items'] %}
-					<div
-						class="my-5">
+						</li>
+						<li class="usa-sidenav__item">
+							<a href="javascript:void(0);">Parent link</a>
+						</li>
+					</ul>
 
-						{# Access the paragraph entity for the current item #}
-						{% set paragraph_entity = item.entity %}
+				</nav>
+			</div>
 
-						{# Output the paragraph type (WYSIWYG, Media, Blockquote) #}
-						{% set paragraph_type = paragraph_entity.type.target_id %}
-						<strong>{{ paragraph_type }}</strong>
+			<main class="desktop:grid-col-9 usa-prose" id="main-content">
 
-						{# Output fields based on the paragraph type using Twig Tweak functions #}
-						{% if paragraph_type == 'wysiwyg' %}
-							<div class="wysiwyg">
-								<p>{{ paragraph_entity.field_wysiwyg_content.value }}</p>
-							</div>
+				<h1>{{ node.title.value }}</h1>
 
-						{% elseif paragraph_type == 'card_deck' %}
+				{# Check if the repeater field exists and is not empty #}
+				{% if content.field_content is not empty %}
+					{# Loop through each item in the repeater field #}
+					{% for item in content.field_content['#items'] %}
+						<div
+							class="margin-y-5">
 
-							{# Render the card_deck entity if it exists #}
-							{% if paragraph_entity.field_cards is not empty %}
-								{# Loop through each item in the accordion list field #}
-								<div class="row row-cols-1 row-cols-md-3 g-4">
+							{# Access the paragraph entity for the current item #}
+							{% set paragraph_entity = item.entity %}
 
+							{# Output the paragraph type (WYSIWYG, Media, Blockquote) #}
+							{% set paragraph_type = paragraph_entity.type.target_id %}
+							<!-- paragraph-entity: {{ paragraph_type }} -->
 
-									{% for card_item in paragraph_entity.field_cards %}
-										{# Access the accordion paragraph entity for the current item #}
-										{% set card_entity = card_item.entity %}
-										{# Output the accordion title and content #}
-										<div class="col">
-											<div class="card">
-												<img class="card-img-top" alt="{{card_entity.field_image.entity.field_media_image.alt}}" href="{{card_entity.field_image.entity.field_media_image.entity.uri.value}}" src="{{file_url(card_entity.field_image.entity.field_media_image.entity.uri.value)}}">
-
-												<div class="card-body">
-													<h5 class="card-title">{{ card_entity.field_title.value }}</h5>
-													<p class="card-text">{{card_entity.field_description.value}}</p>
-													<a class="btn btn-primary" href="{{card_entity.field_link.value[0].uri}}">
-														{{card_entity.field_link.value[0].title}}</a>
-												</div>
-											</div>
-										</div>
-
-									{% endfor %}
-
+							{# Output fields based on the paragraph type using Twig Tweak functions #}
+								{% if paragraph_type == 'wysiwyg' %}
+								{% set rich_content = {
+                    '#type':   'processed_text',
+                    '#text':    paragraph_entity.field_wysiwyg_content[0].value,
+                    '#format':  paragraph_entity.field_wysiwyg_content[0].format,
+                  }
+                %}
+									<div class="usa-prose"> {{rich_content}}
 								</div>
+
+								{# Output fields based on the paragraph type using Twig Tweak functions #}
+							{% elseif paragraph_type == 'summary_box' %}
+								<div class="usa-summary-box" role="region" aria-labelledby="summary-box-key-information">
+									<div class="usa-summary-box__body">
+										<h3 class="usa-summary-box__heading" id="summary-box-key-information">
+											{{paragraph_entity.field_summary_box_title.value}}
+										</h3>
+										<div class="usa-summary-box__text usa-prose">
+											{% set rich_summary_box_content = {
+                          '#type':   'processed_text',
+                          '#text':    paragraph_entity.field_summary_box_content[0].value,
+                          '#format':  paragraph_entity.field_summary_box_content[0].format,
+                        }
+                      %}
+											{{rich_summary_box_content}}
+										</div>
+									</div>
+								</div>
+
+							{% elseif paragraph_type == 'card_deck' %}
+
+								{# Render the card_deck entity if it exists #}
+								{% if paragraph_entity.field_cards is not empty %}
+									{# Loop through each item in the accordion list field #}
+									<ul class="usa-card-group">
+
+										{% for card_item in paragraph_entity.field_cards %}
+											{# Access the accordion paragraph entity for the current item #}
+											{% set card_entity = card_item.entity %}
+											{# Output the accordion title and content #}
+											<li class="usa-card tablet:grid-col-12 desktop:grid-col-6">
+												<div class="usa-card__container">
+													<div class="usa-card__header">
+														<h2 class="usa-card__heading">{{ card_entity.field_title.value }}</h2>
+													</div>
+													<div class="usa-card__media">
+														<div class="usa-card__img">
+															<img alt="{{card_entity.field_image.entity.field_media_image.alt}}" href="{{card_entity.field_image.entity.field_media_image.entity.uri.value}}" src="{{file_url(card_entity.field_image.entity.field_media_image.entity.uri.value)}}">
+														</div>
+													</div>
+													<div class="usa-card__body">
+														<p class="card-text">{{card_entity.field_description.value}}</p>
+													</div>
+													<div class="usa-card__footer">
+														<a class="usa-button" href="{{card_entity.field_link.value[0].uri}}">
+															{{card_entity.field_link.value[0].title}}</a>
+													</div>
+												</div>
+											</li>
+
+										{% endfor %}
+
+									</ul>
+								{% endif %}
+
+							{% elseif paragraph_type == 'accordion_list' %}
+
+								{# Render the card_deck entity if it exists #}
+								{% if paragraph_entity.field_accordions is not empty %}
+									{# Loop through each item in the accordion list field #}
+									<div class="usa-accordion usa-accordion--multiselectable" data-allow-multiple>
+
+										{% for accordion_item in paragraph_entity.field_accordions %}
+											{% set accordion_id = 'accordion-' ~ random() %}
+											{# Access the accordion paragraph entity for the current item #}
+											{% set accordion_entity = accordion_item.entity %}
+											{# Output the accordion title and content #}
+											<h4 class="usa-accordion__heading">
+												<button type="button" class="usa-accordion__button" aria-expanded="false" aria-controls="{{accordion_id}}">
+													{{ accordion_entity.field_accordion_title.value }}
+												</button>
+											</h4>
+											<div id="{{accordion_id}}" class="usa-accordion__content usa-prose">
+												{% set accordion_rich_content = {
+                              '#type':   'processed_text',
+                              '#text':    accordion_entity.field_accordion_content[0].value,
+                              '#format':  accordion_entity.field_accordion_content[0].format,
+                            }
+                          %}
+												{{accordion_rich_content}}
+											</div>
+
+										{% endfor %}
+
+									</ul>
+								{% endif %}
+
+							{% elseif paragraph_type == 'block_quote' %}
+
+								<figure>
+									<blockquote class="blockquote">
+										<p>
+											{{ paragraph_entity.field_quote.value }}
+										</p>
+
+									</blockquote>
+									{% if paragraph_entity.field_quote_url.value %}
+										{# {{drupal_dump(paragraph_entity.field_quote_url.value)}} #}
+
+										<figcaption class="blockquote-footer">
+											<cite title="{{paragraph_entity.field_quote_url.value[0].title}}">
+												<a href="{{paragraph_entity.field_quote_url.value[0].uri}}">{{paragraph_entity.field_quote_url.value[0].title}}</a>
+
+											</cite>
+										{% endif %}
+
+									</figcaption>
+								</figure>
+
 							{% endif %}
+						{% endfor %}
+					</div>
+				{% endif %}
 
-						{% elseif paragraph_type == 'block_quote' %}
+			</main>
+		</div>
 
-							<figure>
-								<blockquote class="blockquote">
-									<p>
-										{{ paragraph_entity.field_quote.value }}
-									</p>
 
-								</blockquote>
-								{% if paragraph_entity.field_quote_url.value %}
-									{# {{drupal_dump(paragraph_entity.field_quote_url.value)}} #}
-
-									<figcaption class="blockquote-footer">
-										<cite title="{{paragraph_entity.field_quote_url.value[0].title}}">
-											<a href="{{paragraph_entity.field_quote_url.value[0].uri}}">{{paragraph_entity.field_quote_url.value[0].title}}</a>
-
-										</cite>
-									{% endif %}
-
-								</figcaption>
-							</figure>
-
-						{% endif %}
-					{% endfor %}
-				</div>
-			{% endif %}
+		<div class="usa-layout-docs__sidenav desktop:display-none">
+			<nav aria-label="Secondary navigation">
+				<ul class="usa-sidenav">
+					<li class="usa-sidenav__item">
+						<a href="javascript:void(0);">Parent link</a>
+					</li>
+					<li class="usa-sidenav__item">
+						<a href="javascript:void(0);" class="usa-current">Current page</a>
+						<ul class="usa-sidenav__sublist">
+							<li class="usa-sidenav__item">
+								<a href="javascript:void(0);">Child link</a>
+							</li>
+							<li class="usa-sidenav__item">
+								<a href="javascript:void(0);" class="usa-current">Child link</a>
+								<ul class="usa-sidenav__sublist">
+									<li class="usa-sidenav__item">
+										<a href="javascript:void(0);">Grandchild link</a>
+									</li>
+									<li class="usa-sidenav__item">
+										<a href="javascript:void(0);" class="usa-current">Grandchild link</a>
+									</li>
+									<li class="usa-sidenav__item">
+										<a href="javascript:void(0);">Grandchild link</a>
+									</li>
+								</ul>
+							</li>
+							<li class="usa-sidenav__item">
+								<a href="javascript:void(0);">Child link</a>
+							</li>
+						</ul>
+					</li>
+					<li class="usa-sidenav__item">
+						<a href="javascript:void(0);">Parent link</a>
+					</li>
+				</ul>
+			</nav>
 		</div>
 	</div>
 </div>

@@ -2,8 +2,12 @@ global-styling:
   version: 1.0.0
   css:
    theme:
-    css/main.css: {}
+    css/uswds.min.css: {}
+  # dependencies:
+    # - core/jquery
+global-scripts:
+  version: 1.0.0
   js:
-   js/main.js: {}
+   js/uswds.min.js: {}
   # dependencies:
     # - core/jquery
